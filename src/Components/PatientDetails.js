@@ -4,7 +4,6 @@ import { Button, Modal, Box, Typography, TextField, IconButton } from '@mui/mate
 import { Edit, Delete } from '@mui/icons-material';
 import viewIcon from "../assets/viewIcon.svg"
 import dietChartIcon from "../assets/dietChart.svg"
-import assignIcon from "../assets/assignIcon.png"
 
 const PatientDetails = () => {
   const token = localStorage.getItem('token');
@@ -278,12 +277,6 @@ const PatientDetails = () => {
             aria-label="dietChart"
           >
             <img src={dietChartIcon} alt="Diet Chart" style={{ width: 24, height: 24 }} />
-          </IconButton>
-          <IconButton
-            onClick={() => alert('Assign functionality')}
-            aria-label="assign"
-          >
-            <img src={assignIcon} alt="Assign Person" style={{ width: 24, height: 24 }} />
           </IconButton>
           <IconButton
             onClick={() => handleOpenModal(params.row)}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Button, Modal, Box, Typography, TextField, IconButton } from '@mui/material';
-import { Delete } from '@mui/icons-material';
+import { Button, Modal, Box, Typography, TextField } from '@mui/material';
 
 const PantryStaff = () => {
   const token = localStorage.getItem('token');
@@ -87,34 +86,15 @@ const PantryStaff = () => {
 
   };
 
-  // Handle staff deletion
-  const handleDeleteStaff = (id) => {
-    setPantryStaff(pantryStaff.filter((staff) => staff.id !== id));
-  };
-
   const columns = [
     {
       field: 'serial',
       headerName: 'S.No',
       width: 100,
     },
-    { field: 'name', headerName: 'Name', width: 200 },
-    { field: 'contactInfo', headerName: 'Contact Info', width: 150 },
-    { field: 'location', headerName: 'Location', width: 150 },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      renderCell: (params) => (
-        <IconButton
-          color="error"
-          onClick={() => handleDeleteStaff(params.row.id)}
-          aria-label="delete"
-        >
-          <Delete />
-        </IconButton>
-      ),
-    },
+    { field: 'name', headerName: 'Name', width: 250 },
+    { field: 'contactInfo', headerName: 'Contact Info', width: 200 },
+    { field: 'location', headerName: 'Location', width: 250 },
   ];
 
   return (
