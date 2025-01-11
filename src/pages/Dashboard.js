@@ -5,6 +5,7 @@ import PantryStaff from '../Components/PantryStaff';
 import MealStatus from '../Components/MealStatus';
 import ResponsiveAppBar from '../Components/ResponsiveAppBar';
 import DeliveryPerson from '../Components/DeliveryPerson';
+import AssignTask from '../Components/AssignTask';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -31,6 +32,7 @@ const Dashboard = () => {
           <Routes>
             <Route path="/patient" element={<PatientDetails />} />
             <Route path="/pantry-staff" element={<PantryStaff />} />
+            <Route path="/assign-task" element={<AssignTask />} />
             <Route path="/meal-status" element={<MealStatus />} />
             <Route
               path="/"

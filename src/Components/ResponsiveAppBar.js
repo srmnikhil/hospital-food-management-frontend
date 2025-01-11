@@ -16,6 +16,7 @@ const roleBasedPages = {
   Manager: [
     { name: 'Patient Details', route: '/dashboard/patient' },
     { name: 'Pantry Staff', route: '/dashboard/pantry-staff' },
+    { name: 'Assign Task', route: '/dashboard/assign-task' },
     { name: 'Meal Status', route: '/dashboard/meal-status' }
   ],
   PantryStaff: [

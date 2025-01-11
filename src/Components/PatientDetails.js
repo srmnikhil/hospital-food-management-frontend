@@ -1,46 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Button, Modal, Box, Typography, TextField, IconButton } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import viewIcon from "../assets/viewIcon.svg"
-import dietChart from "../assets/dietChart.svg"
+import dietChartIcon from "../assets/dietChart.svg"
 import assignIcon from "../assets/assignIcon.png"
 
-
-const samplePatients = [
-  {
-    id: 1,
-    name: 'John Doe',
-    diseases: 'Diabetes',
-    allergies: 'Peanuts',
-    roomNumber: 101,
-    bedNumber: 1,
-    floorNumber: 1,
-    age: 45,
-    gender: 'Male',
-    contactInfo: '1234567890',
-    emergencyContact: '9876543210',
-    notes: 'Requires low-sugar diet',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    diseases: 'Hypertension',
-    allergies: 'Dust',
-    roomNumber: 102,
-    bedNumber: 2,
-    floorNumber: 1,
-    age: 50,
-    gender: 'Female',
-    contactInfo: '0987654321',
-    emergencyContact: '1122334455',
-    notes: 'Low-salt diet recommended',
-  }
-];
-
 const PatientDetails = () => {
-  const [patients, setPatients] = useState(samplePatients);
+  const token = localStorage.getItem('token');
+  const [patients, setPatients] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [openDietModal, setOpenDietModal] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [openFormModal, setOpenFormModal] = useState(false);
   const [newPatient, setNewPatient] = useState({
@@ -54,8 +25,43 @@ const PatientDetails = () => {
     gender: '',
     contactInfo: '',
     emergencyContact: '',
-    notes: '',
+    remarks: '',
   });
+  const [dietChart, setDietChart] = useState({
+    morningMeal: '',
+    eveningMeal: '',
+    nightMeal: '',
+    ingredients: '',
+    instructions: '',
+  });
+
+  // Fetch patients from API whenever the patients list changes
+  useEffect(() => {
+    const loginToken = localStorage.getItem('token');
+    const fetchPatients = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/manager/getAllPatients`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${loginToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        const data = await response.json();
+        if (data.success && data.patients) {
+          const patientsWithSerial = data.patients.map((patient, index) => ({
+            ...patient,
+            serial: index + 1, // Add serial number dynamically
+          }));
+          setPatients(patientsWithSerial);
+        }
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    };
+
+    fetchPatients();
+  }, []);
 
   const handleOpenModal = (patient) => {
     setSelectedPatient(patient);
@@ -68,6 +74,7 @@ const PatientDetails = () => {
   };
 
   const handleAddPatient = () => {
+    setIsEditing(false);
     setOpenFormModal(true);
   };
 
@@ -79,25 +86,179 @@ const PatientDetails = () => {
     }));
   };
 
-  const handleSubmitForm = () => {
-    setPatients([...patients, { ...newPatient, id: patients.length + 1 }]);
-    setOpenFormModal(false);
+  const handleOpenFormModal = (patient) => {
+    setSelectedPatient(patient);
     setNewPatient({
-      name: '',
-      diseases: '',
-      allergies: '',
-      roomNumber: '',
-      bedNumber: '',
-      floorNumber: '',
-      age: '',
-      gender: '',
-      contactInfo: '',
-      emergencyContact: '',
-      notes: '',
+      name: patient.name || '',
+      diseases: patient.diseases || '',
+      allergies: patient.allergies || '',
+      roomNumber: patient.roomNumber || '',
+      bedNumber: patient.bedNumber || '',
+      floorNumber: patient.floorNumber || '',
+      age: patient.age || '',
+      gender: patient.gender || '',
+      contactInfo: patient.contactInfo || '',
+      emergencyContact: patient.emergencyContact || '',
+      remarks: patient.remarks || '',
     });
+    setIsEditing(true);
+    setOpenFormModal(true);
+  };
+
+  const handleOpenDietModal = (patient) => {
+    setSelectedPatient(patient);
+    if (patient.dietChart) {
+      setDietChart(patient.dietChart); // Pre-fill form with existing diet chart data if available
+    } else {
+      setDietChart({
+        morningMeal: '',
+        eveningMeal: '',
+        nightMeal: '',
+        ingredients: '',
+        instructions: '',
+      });
+    }
+    setOpenDietModal(true);
+  };
+
+  const handleCloseDietModal = () => {
+    setSelectedPatient(null);
+    setOpenDietModal(false);
+  };
+
+  const handleDietFormChange = (e) => {
+    const { name, value } = e.target;
+    setDietChart((prevDietChart) => ({
+      ...prevDietChart,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmitDietForm = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/manager/setDiet/${selectedPatient._id}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dietChart),
+      });
+      const data = await response.json();
+      if (data.success) {
+        // Update the patient's diet chart in local state
+        setPatients((prevPatients) =>
+          prevPatients.map((patient) =>
+            patient._id === selectedPatient._id ? { ...patient, dietChart: data.dietChart } : patient
+          )
+        );
+        setOpenDietModal(false);
+      } else {
+        alert('Failed to update diet chart');
+      }
+    } catch (error) {
+      console.error('Error submitting diet chart:', error);
+      alert('Error submitting diet chart');
+    }
+  };
+
+  const handleDeletePatient = async (id) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/manager/deletePatient/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      console.log(id, response)
+      if (!response.ok) {
+        throw new Error('Failed to delete the patient');
+      }
+      // Remove the patient from the local state after successful deletion
+      setPatients(patients.filter(patient => patient._id !== id));
+      alert('Patient deleted successfully');
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      alert('Failed to delete patient');
+    }
+  };
+
+  const handleSubmitForm = async () => {
+    try {
+      const url = isEditing
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/manager/updatePatient/${selectedPatient._id}`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/manager/addPatient`;
+      const method = isEditing ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPatient),
+      });
+      const data = await response.json();
+      console.log(data)
+      if (data.success) {
+        if (isEditing) {
+          // Update the patient in local state
+          setPatients((prevPatients) =>
+            prevPatients.map((patient) =>
+              patient._id === selectedPatient._id ? { ...patient, ...newPatient } : patient
+            )
+          );
+          setNewPatient({
+            name: '',
+            diseases: '',
+            allergies: '',
+            roomNumber: '',
+            bedNumber: '',
+            floorNumber: '',
+            age: '',
+            gender: '',
+            contactInfo: '',
+            emergencyContact: '',
+            remarks: '',
+          });
+        } else {
+          // Add the new patient to local state
+          setPatients((prevPatients) => {
+            const updatedPatients = [
+              ...prevPatients,
+              { ...data.patient, serial: prevPatients + 1 }
+            ]
+            return updatedPatients
+          });
+          setNewPatient({
+            name: '',
+            diseases: '',
+            allergies: '',
+            roomNumber: '',
+            bedNumber: '',
+            floorNumber: '',
+            age: '',
+            gender: '',
+            contactInfo: '',
+            emergencyContact: '',
+            remarks: '',
+          });
+          setOpenFormModal(false); // Close the modal
+        }
+      } else {
+        alert(isEditing ? 'Failed to update patient' : 'Failed to add patient');
+      }
+    } catch (error) {
+      console.error("Error adding patient:", error);
+    }
   };
 
   const columns = [
+    {
+      field: 'serial',
+      headerName: 'S.No',
+      width: 100,
+    },
     { field: 'name', headerName: 'Name', width: 200 },
     { field: 'diseases', headerName: 'Diseases', width: 150 },
     { field: 'allergies', headerName: 'Allergies', width: 150 },
@@ -113,10 +274,10 @@ const PatientDetails = () => {
       renderCell: (params) => (
         <>
           <IconButton
-            onClick={() => alert('Diet Chart functionality')}
+            onClick={() => handleOpenDietModal(params.row)}
             aria-label="dietChart"
           >
-            <img src={dietChart} alt="Diet Chart" style={{ width: 24, height: 24 }} />
+            <img src={dietChartIcon} alt="Diet Chart" style={{ width: 24, height: 24 }} />
           </IconButton>
           <IconButton
             onClick={() => alert('Assign functionality')}
@@ -132,14 +293,14 @@ const PatientDetails = () => {
           </IconButton>
           <IconButton
             color="warning"
-            onClick={() => alert('Edit functionality')}
+            onClick={() => handleOpenFormModal(params.row)}
             aria-label="edit"
           >
             <Edit />
           </IconButton>
           <IconButton
             color="error"
-            onClick={() => alert('Delete functionality')}
+            onClick={() => handleDeletePatient(params.row._id)}
             aria-label="delete"
           >
             <Delete />
@@ -182,7 +343,7 @@ const PatientDetails = () => {
             maxHeight: { md: '80vh', xs: '70vh' },
           }}
         >
-          <Typography variant="h6" gutterBottom sx={{textAlign:"center", textDecoration:"underline", textUnderlineOffset: "4px"}}>Add New Patient</Typography>
+          <Typography variant="h6" gutterBottom sx={{ textAlign: "center", textDecoration: "underline", textUnderlineOffset: "4px" }}>Add New Patient</Typography>
           <form>
             <TextField
               label="Name"
@@ -278,7 +439,7 @@ const PatientDetails = () => {
               onClick={handleSubmitForm}
               sx={{ marginTop: 2 }}
             >
-              Submit
+              {isEditing ? "Save Changes" : "Submit"}
             </Button>
           </form>
         </Box>
@@ -302,7 +463,7 @@ const PatientDetails = () => {
         >
           {selectedPatient && (
             <Box>
-              <Typography variant="h6" gutterBottom sx={{textAlign:"center", textDecoration:"underline", textUnderlineOffset: "4px"}}>
+              <Typography variant="h6" gutterBottom sx={{ textAlign: "center", textDecoration: "underline", textUnderlineOffset: "4px" }}>
                 Patient Details
               </Typography>
               <Typography><strong>Name:</strong> {selectedPatient.name}</Typography>
@@ -321,8 +482,81 @@ const PatientDetails = () => {
         </Box>
       </Modal>
 
+      <Modal open={openDietModal} onClose={handleCloseDietModal}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: { md: 400, xs: 300 },
+            bgcolor: 'background.paper',
+            border: '1px solid grey',
+            borderRadius: '1rem',
+            boxShadow: 24,
+            p: 4,
+            overflowY: 'auto',
+            maxHeight: { md: '80vh', xs: '70vh' },
+          }}
+        >
+          <Typography variant="h6" gutterBottom sx={{ textAlign: 'center', textDecoration: 'underline', textUnderlineOffset: '4px' }}>
+            Diet Chart for {selectedPatient ? selectedPatient.name : 'Patient'}
+          </Typography>
+          <form>
+            <TextField
+              label="Morning Meal"
+              name="morningMeal"
+              value={dietChart.morningMeal}
+              onChange={handleDietFormChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Evening Meal"
+              name="eveningMeal"
+              value={dietChart.eveningMeal}
+              onChange={handleDietFormChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Night Meal"
+              name="nightMeal"
+              value={dietChart.nightMeal}
+              onChange={handleDietFormChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Ingredients"
+              name="ingredients"
+              value={dietChart.ingredients}
+              onChange={handleDietFormChange}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Instructions"
+              name="instructions"
+              value={dietChart.instructions}
+              onChange={handleDietFormChange}
+              fullWidth
+              margin="normal"
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSubmitDietForm}
+              sx={{ marginTop: 2 }}
+            >
+              Submit
+            </Button>
+          </form>
+        </Box>
+      </Modal>
+
       <Box sx={{ height: 450, width: '100%' }}>
-        <DataGrid rows={patients} columns={columns} pageSize={5} />
+        <DataGrid rows={patients} columns={columns} pageSize={5} getRowId={(row) => row.patient?._id || row._id} />
       </Box>
     </Box>
   );
