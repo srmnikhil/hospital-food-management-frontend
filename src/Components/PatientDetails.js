@@ -197,8 +197,12 @@ const PatientDetails = () => {
         },
         body: JSON.stringify(newPatient),
       });
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Failed to add patient: ${errorData.error || 'Unknown error'}`);
+        return;
+      }
       const data = await response.json();
-      console.log(data)
       if (data.success) {
         if (isEditing) {
           // Update the patient in local state
@@ -269,7 +273,7 @@ const PatientDetails = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 250,
+      width: 200,
       renderCell: (params) => (
         <>
           <IconButton

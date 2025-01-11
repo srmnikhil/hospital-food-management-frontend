@@ -1,26 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Button, Modal, Box, Typography, TextField, IconButton } from '@mui/material';
-import { Delete } from '@mui/icons-material';
-
-// Sample delivery personnel data
-const sampleDeliveryPersonnel = [
-  {
-    id: 1,
-    name: 'John Doe',
-    contactInfo: '9876543210',
-    otherDetails: 'Shift: Morning',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    contactInfo: '8765432190',
-    otherDetails: 'Shift: Evening',
-  },
-];
+import { Button, Modal, Box, Typography, TextField } from '@mui/material';
 
 const DeliveryPerson = () => {
-  const [deliveryPersonnel, setDeliveryPersonnel] = useState(sampleDeliveryPersonnel);
+  const [deliveryPersonnel, setDeliveryPersonnel] = useState([]);
   const [openFormModal, setOpenFormModal] = useState(false);
   const [newPersonnel, setNewPersonnel] = useState({
     name: '',
@@ -28,9 +11,74 @@ const DeliveryPerson = () => {
     otherDetails: '',
   });
 
-  // Open the add personnel modal
-  const handleAddPersonnel = () => {
-    setOpenFormModal(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch delivery personnel from the backend
+  const fetchDeliveryPersonnel = async () => {
+    setLoading(true);
+    try {
+      const loginToken = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/pantry/getDeliveryPersonnel`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${loginToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setDeliveryPersonnel(
+        data.deliveryPersons.map((person, index) => ({
+          id: person._id, // Use MongoDB ID as unique identifier
+          name: person.name,
+          contactInfo: person.contactInfo,
+          otherDetails: person.otherDetails,
+          serial: index + 1, // Add serial number dynamically
+        }))
+      );
+    } catch (err) {
+      console.error("Error fetching delivery personnel:", err);
+      setError("Failed to fetch delivery personnel.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Add new delivery personnel
+  const addDeliveryPersonnel = async () => {
+    try {
+      const loginToken = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/pantry/addDeliveryPersonnel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${loginToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newPersonnel),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const addedPersonnel = await response.json();
+      setDeliveryPersonnel((prevPersonnel) => [
+        ...prevPersonnel,
+        { ...addedPersonnel, id: addedPersonnel._id, serial: prevPersonnel.length + 1 },
+      ]);
+      setOpenFormModal(false);
+      setNewPersonnel({
+        name: '',
+        contactInfo: '',
+        otherDetails: '',
+      });
+    } catch (err) {
+      console.error("Error adding delivery personnel:", err);
+      setError("Failed to add delivery personnel.");
+    }
   };
 
   // Handle form input changes
@@ -44,41 +92,18 @@ const DeliveryPerson = () => {
 
   // Handle form submission
   const handleSubmitForm = () => {
-    setDeliveryPersonnel([
-      ...deliveryPersonnel,
-      { ...newPersonnel, id: deliveryPersonnel.length + 1 },
-    ]);
-    setOpenFormModal(false);
-    setNewPersonnel({
-      name: '',
-      contactInfo: '',
-      otherDetails: '',
-    });
+    addDeliveryPersonnel();
   };
 
-  // Handle personnel deletion
-  const handleDeletePersonnel = (id) => {
-    setDeliveryPersonnel(deliveryPersonnel.filter((personnel) => personnel.id !== id));
-  };
+  useEffect(() => {
+    fetchDeliveryPersonnel();
+  }, []);
 
   const columns = [
+    { field: 'serial', headerName: 'S.No.', width: 100 },
     { field: 'name', headerName: 'Name', width: 200 },
     { field: 'contactInfo', headerName: 'Contact Info', width: 150 },
     { field: 'otherDetails', headerName: 'Other Details', width: 250 },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      renderCell: (params) => (
-        <IconButton
-          color="error"
-          onClick={() => handleDeletePersonnel(params.row.id)}
-          aria-label="delete"
-        >
-          <Delete />
-        </IconButton>
-      ),
-    },
   ];
 
   return (
@@ -87,7 +112,7 @@ const DeliveryPerson = () => {
         <Typography variant="h4" gutterBottom>
           Delivery Personnel
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleAddPersonnel}>
+        <Button variant="contained" color="primary" onClick={() => setOpenFormModal(true)}>
           Add Delivery Personnel
         </Button>
       </Box>
@@ -149,8 +174,9 @@ const DeliveryPerson = () => {
       </Modal>
 
       <Box sx={{ height: 450, width: '100%' }}>
-        <DataGrid rows={deliveryPersonnel} columns={columns} pageSize={5} />
+        <DataGrid rows={deliveryPersonnel} columns={columns} pageSize={5} loading={loading} />
       </Box>
+      {error && <Typography color="error">{error}</Typography>}
     </Box>
   );
 };
