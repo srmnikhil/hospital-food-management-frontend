@@ -34,7 +34,6 @@ const MealStatus = ({ role }) => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data)
         // Transform data to match the grid structure
         const formattedData = data.map((meal, index) => ({
           serial: index + 1,

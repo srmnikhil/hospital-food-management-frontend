@@ -13,6 +13,7 @@ const PatientDetails = () => {
   const [openDietModal, setOpenDietModal] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [openFormModal, setOpenFormModal] = useState(false);
+  const [errors, setErrors] = useState({});
   const [newPatient, setNewPatient] = useState({
     name: '',
     diseases: '',
@@ -151,6 +152,7 @@ const PatientDetails = () => {
             patient._id === selectedPatient._id ? { ...patient, dietChart: data.dietChart } : patient
           )
         );
+        alert("Diet Chart Added Succesfully.")
         setOpenDietModal(false);
       } else {
         alert('Failed to update diet chart');
@@ -182,7 +184,50 @@ const PatientDetails = () => {
     }
   };
 
+  const fieldLabels = {
+    name: "Name",
+    age: "Age",
+    gender: "Gender",
+    contactInfo: "Contact Info",
+    roomNumber: "Room Number",
+    bedNumber: "Bed Number",
+    floorNumber: "Floor Number",
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+  
+    const requiredFields = ['name', 'roomNumber', 'bedNumber', 'floorNumber', 'age', 'gender', 'contactInfo'];
+  
+    Object.keys(newPatient).forEach((key) => {
+      // Check if the field is required
+      if (requiredFields.includes(key)) {
+        const value = newPatient[key];
+  
+        // Handle string fields with .trim()
+        if (typeof value === 'string' && !value.trim()) {
+          newErrors[key] = `${fieldLabels[key]} is required`;
+          alert(`${fieldLabels[key]} field can't be empty`);
+        }
+        // Handle non-string fields (like numbers) that are empty
+        else if ((typeof value === 'number' || value === undefined || value === null) && !value) {
+          newErrors[key] = `${fieldLabels[key]} is required`;
+          alert(`${fieldLabels[key]} field can't be empty`);
+        }
+      }
+    });
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+  
+
+
   const handleSubmitForm = async () => {
+    if (!validateForm()) {
+      return; // Stop submission if validation fails
+    }
+
     try {
       const url = isEditing
         ? `${process.env.REACT_APP_BACKEND_URL}/api/manager/updatePatient/${selectedPatient._id}`
@@ -199,7 +244,7 @@ const PatientDetails = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        alert(`Failed to add patient: ${errorData.error || 'Unknown error'}`);
+        alert(`Failed to ${isEditing ? "update" : "add"} patient: ${errorData.error || 'Unknown error'}`);
         return;
       }
       const data = await response.json();
@@ -211,43 +256,33 @@ const PatientDetails = () => {
               patient._id === selectedPatient._id ? { ...patient, ...newPatient } : patient
             )
           );
-          setNewPatient({
-            name: '',
-            diseases: '',
-            allergies: '',
-            roomNumber: '',
-            bedNumber: '',
-            floorNumber: '',
-            age: '',
-            gender: '',
-            contactInfo: '',
-            emergencyContact: '',
-            remarks: '',
-          });
+          alert("Patient details updated successfully.");
+          setOpenFormModal(false); // Close the modal
         } else {
           // Add the new patient to local state
           setPatients((prevPatients) => {
             const updatedPatients = [
               ...prevPatients,
-              { ...data.patient, serial: prevPatients + 1 }
+              { ...data.patient, serial: prevPatients.length + 1 }
             ]
-            return updatedPatients
+            return updatedPatients;
           });
-          setNewPatient({
-            name: '',
-            diseases: '',
-            allergies: '',
-            roomNumber: '',
-            bedNumber: '',
-            floorNumber: '',
-            age: '',
-            gender: '',
-            contactInfo: '',
-            emergencyContact: '',
-            remarks: '',
-          });
+          alert("Patient added successfully.")
           setOpenFormModal(false); // Close the modal
         }
+        setNewPatient({
+          name: '',
+          diseases: '',
+          allergies: '',
+          roomNumber: '',
+          bedNumber: '',
+          floorNumber: '',
+          age: '',
+          gender: '',
+          contactInfo: '',
+          emergencyContact: '',
+          remarks: '',
+        });
       } else {
         alert(isEditing ? 'Failed to update patient' : 'Failed to add patient');
       }
@@ -349,6 +384,7 @@ const PatientDetails = () => {
               onChange={handleFormChange}
               fullWidth
               margin="normal"
+              error={!!errors.name}
             />
             <TextField
               label="Diseases"
@@ -373,6 +409,7 @@ const PatientDetails = () => {
               onChange={handleFormChange}
               fullWidth
               margin="normal"
+              error={!!errors.roomNumber}
             />
             <TextField
               label="Bed Number"
@@ -381,6 +418,8 @@ const PatientDetails = () => {
               onChange={handleFormChange}
               fullWidth
               margin="normal"
+              error={!!errors.bedNumber}
+              disabled={isEditing}
             />
             <TextField
               label="Floor Number"
@@ -389,6 +428,7 @@ const PatientDetails = () => {
               onChange={handleFormChange}
               fullWidth
               margin="normal"
+              error={!!errors.floorNumber}
             />
             <TextField
               label="Age"
@@ -397,6 +437,7 @@ const PatientDetails = () => {
               onChange={handleFormChange}
               fullWidth
               margin="normal"
+              error={!!errors.age}
             />
             <TextField
               label="Gender"
@@ -405,6 +446,7 @@ const PatientDetails = () => {
               onChange={handleFormChange}
               fullWidth
               margin="normal"
+              error={!!errors.gender}
             />
             <TextField
               label="Contact Info"
@@ -413,6 +455,7 @@ const PatientDetails = () => {
               onChange={handleFormChange}
               fullWidth
               margin="normal"
+              error={!!errors.contactInfo}
             />
             <TextField
               label="Emergency Contact"
@@ -423,9 +466,9 @@ const PatientDetails = () => {
               margin="normal"
             />
             <TextField
-              label="Notes"
-              name="notes"
-              value={newPatient.notes}
+              label="Remarks"
+              name="remarks"
+              value={newPatient.remarks}
               onChange={handleFormChange}
               fullWidth
               margin="normal"
@@ -473,7 +516,7 @@ const PatientDetails = () => {
               <Typography><strong>Gender:</strong> {selectedPatient.gender}</Typography>
               <Typography><strong>Contact Info:</strong> {selectedPatient.contactInfo}</Typography>
               <Typography><strong>Emergency Contact:</strong> {selectedPatient.emergencyContact}</Typography>
-              <Typography><strong>Notes:</strong> {selectedPatient.notes}</Typography>
+              <Typography><strong>Ramarks:</strong> {selectedPatient.remarks}</Typography>
             </Box>
           )}
         </Box>
