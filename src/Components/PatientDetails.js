@@ -74,6 +74,17 @@ const PatientDetails = () => {
   };
 
   const handleAddPatient = () => {
+    setNewPatient({
+      name: '',
+      roomNumber: '',
+      bedNumber: '',
+      floorNumber: '',
+      age: '',
+      gender: '',
+      contactInfo: '',
+      emergencyContact: '',
+      remarks: '',
+    });
     setIsEditing(false);
     setOpenFormModal(true);
   };
@@ -93,7 +104,6 @@ const PatientDetails = () => {
       diseases: patient.diseases || '',
       allergies: patient.allergies || '',
       roomNumber: patient.roomNumber || '',
-      bedNumber: patient.bedNumber || '',
       floorNumber: patient.floorNumber || '',
       age: patient.age || '',
       gender: patient.gender || '',
@@ -171,7 +181,6 @@ const PatientDetails = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-      console.log(id, response)
       if (!response.ok) {
         throw new Error('Failed to delete the patient');
       }
@@ -240,7 +249,7 @@ const PatientDetails = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newPatient),
+        body: JSON.stringify(newPatient),  
       });
       if (!response.ok) {
         const errorData = await response.json();
