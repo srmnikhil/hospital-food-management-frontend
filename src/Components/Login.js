@@ -27,7 +27,7 @@ function Login() {
 
     if (guestMode) {
       // Prefill email and password with values from env
-      setEmail(process.env.REACT_APP_GUEST_EMAIL); // Email from .env
+      setEmail("email@gnail.com"); // Email from .env
       setPassword(process.env.REACT_APP_GUEST_PASSWORD); // Password from .env
       handleLogin(); // Trigger login automatically
     }
