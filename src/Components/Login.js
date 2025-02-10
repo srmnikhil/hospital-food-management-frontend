@@ -10,14 +10,15 @@ import {
 } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
 
 function Login() {
   let navigate = useNavigate();
+  const location = useLocation(); // Using useLocation to get the current location
 
-  // Get the URL parameters
-  const urlParams = new URLSearchParams(window.location.search);
+  // Use URLSearchParams to get query parameters
+  const urlParams = new URLSearchParams(location.search);
   const guestMode = urlParams.has("guestMode"); // Check if guestMode is in the URL
 
   // Update the heading based on guestMode
@@ -29,7 +30,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (evt) => {
-    evt?.preventDefault(); // prevent default only if the event is triggered by form submission
+    evt?.preventDefault();
     setLoading(true);
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
