@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -16,21 +16,20 @@ import { toast, ToastContainer } from "react-toastify";
 function Login() {
   let navigate = useNavigate();
 
-  // Check if the guestMode query parameter is in the URL
+  // Get the URL parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const guestMode = urlParams.get("guestMode");
+  const guestMode = urlParams.has("guestMode"); // Check if guestMode is in the URL
 
-  // Set initial state based on guestMode
-  const initialEmail = guestMode === "1" ? process.env.REACT_APP_GUEST_EMAIL : "";
-  const initialPassword = guestMode === "1" ? process.env.REACT_APP_GUEST_PASSWORD : "";
+  // Update the heading based on guestMode
+  const headingText = guestMode ? "Welcome" : "Login";
 
-  const [email, setEmail] = useState(initialEmail);
-  const [password, setPassword] = useState(initialPassword);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (evt) => {
-    if (evt) evt.preventDefault();
+    evt?.preventDefault(); // prevent default only if the event is triggered by form submission
     setLoading(true);
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
@@ -71,15 +70,15 @@ function Login() {
           padding: "1.5rem",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
           position: "absolute",
-          right: { md: "5rem", sm: "2rem", xs: "1rem" }, // Adjust right margin on smaller screens
+          right: { md: "5rem", sm: "2rem", xs: "1rem" },
           top: "50%",
           transform: "translateY(-50%)",
-          width: { md: "25vw", sm: "50vw", xs: "80vw" }, // Adjust width for smaller screens
+          width: { md: "25vw", sm: "50vw", xs: "80vw" },
           backgroundColor: "rgba(255, 255, 255, 0.8)",
         }}
       >
         <Typography variant="h4" component="h1" gutterBottom>
-          Login
+          {headingText}
         </Typography>
         <Box component="form" onSubmit={handleLogin} sx={{ mt: 2, width: "100%" }}>
           <TextField
@@ -130,8 +129,8 @@ function Login() {
               left: "0",
               right: "0",
               bottom: "0",
-              backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent overlay
-              zIndex: 1, // Ensure the overlay is on top of the form
+              backgroundColor: "rgba(255, 255, 255, 0.5)", 
+              zIndex: 1, 
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center'
