@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   TextField,
@@ -15,28 +15,23 @@ import { toast, ToastContainer } from "react-toastify";
 
 function Login() {
   let navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  // Check if the guestMode query parameter is in the URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const guestMode = urlParams.get("guestMode");
+
+  // Set initial state based on guestMode
+  const initialEmail = guestMode === "1" ? process.env.REACT_APP_GUEST_EMAIL : "";
+  const initialPassword = guestMode === "1" ? process.env.REACT_APP_GUEST_PASSWORD : "";
+
+  const [email, setEmail] = useState(initialEmail);
+  const [password, setPassword] = useState(initialPassword);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Check for guestMode parameter in the URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const guestMode = urlParams.has('guestMode'); // Checks if guestMode exists in URL
-
-    if (guestMode) {
-      // Prefill email and password with values from env
-      setEmail("email@gnail.com"); // Email from .env
-      setPassword(process.env.REACT_APP_GUEST_PASSWORD); // Password from .env
-      handleLogin(); // Trigger login automatically
-    }
-  }, []);
-
   const handleLogin = async (evt) => {
-    if (evt) evt.preventDefault(); // Prevent form submission if guest login is triggered automatically
+    if (evt) evt.preventDefault();
     setLoading(true);
-
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
         method: 'POST',
@@ -45,7 +40,6 @@ function Login() {
         },
         body: JSON.stringify({ email: email, password: password })
       });
-
       const json = await response.json();
       if (json.success) {
         setTimeout(() => {
