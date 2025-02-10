@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -19,9 +19,24 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Check for guestMode parameter in the URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const guestMode = urlParams.has('guestMode'); // Checks if guestMode exists in URL
+
+    if (guestMode) {
+      // Prefill email and password with values from env
+      setEmail(process.env.REACT_APP_GUEST_EMAIL); // Email from .env
+      setPassword(process.env.REACT_APP_GUEST_PASSWORD); // Password from .env
+      handleLogin(); // Trigger login automatically
+    }
+  }, []);
+
   const handleLogin = async (evt) => {
-    evt.preventDefault();
+    if (evt) evt.preventDefault(); // Prevent form submission if guest login is triggered automatically
     setLoading(true);
+
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
         method: 'POST',
@@ -30,6 +45,7 @@ function Login() {
         },
         body: JSON.stringify({ email: email, password: password })
       });
+
       const json = await response.json();
       if (json.success) {
         setTimeout(() => {
@@ -114,19 +130,19 @@ function Login() {
         </Box>
         {loading && (
           <Box
-          sx={{
-            position: "absolute",
-            top: "0", 
-            left: "0",
-            right: "0",
-            bottom: "0",
-            backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent overlay
-            zIndex: 1, // Ensure the overlay is on top of the form
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
+            sx={{
+              position: "absolute",
+              top: "0", 
+              left: "0",
+              right: "0",
+              bottom: "0",
+              backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent overlay
+              zIndex: 1, // Ensure the overlay is on top of the form
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
             <CircularProgress />
             <Typography sx={{marginLeft: "5px"}}>Loading...</Typography>
           </Box>
