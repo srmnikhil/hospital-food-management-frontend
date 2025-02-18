@@ -10,24 +10,25 @@ import {
 } from "@mui/material";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
 
 function Login() {
   let navigate = useNavigate();
-  const location = useLocation(); // Using useLocation to get the current location
-
-  // Use URLSearchParams to get query parameters
-  const urlParams = new URLSearchParams(location.search);
-  const guestMode = urlParams.has("guestMode"); // Check if guestMode is in the URL
-
-  // Update the heading based on guestMode
-  const headingText = guestMode ? "Welcome" : "Login";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  useEffect(() => {
+    if (window.location.search === "?guestMode") {
+      setEmail(process.env.REACT_APP_GUEST_EMAIL);
+      setPassword(process.env.REACT_APP_GUEST_PASSWORD);
+      if(email && password){
+        handleLogin();
+      }
+    }
+  }, [email,password]);
 
   const handleLogin = async (evt) => {
     evt?.preventDefault();
@@ -71,15 +72,15 @@ function Login() {
           padding: "1.5rem",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
           position: "absolute",
-          right: { md: "5rem", sm: "2rem", xs: "1rem" },
+          right: { md: "5rem", sm: "2rem", xs: "1rem" }, // Adjust right margin on smaller screens
           top: "50%",
           transform: "translateY(-50%)",
-          width: { md: "25vw", sm: "50vw", xs: "80vw" },
+          width: { md: "25vw", sm: "50vw", xs: "80vw" }, // Adjust width for smaller screens
           backgroundColor: "rgba(255, 255, 255, 0.8)",
         }}
       >
         <Typography variant="h4" component="h1" gutterBottom>
-          {headingText}
+          {window.location.search === "?guestMode" ? "Guest Mode" : "Login"}
         </Typography>
         <Box component="form" onSubmit={handleLogin} sx={{ mt: 2, width: "100%" }}>
           <TextField
@@ -126,23 +127,23 @@ function Login() {
           <Box
             sx={{
               position: "absolute",
-              top: "0", 
+              top: "0",
               left: "0",
               right: "0",
               bottom: "0",
-              backgroundColor: "rgba(255, 255, 255, 0.5)", 
-              zIndex: 1, 
+              backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent overlay
+              zIndex: 1, // Ensure the overlay is on top of the form
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center'
             }}
           >
             <CircularProgress />
-            <Typography sx={{marginLeft: "5px"}}>Loading...</Typography>
+            <Typography sx={{ marginLeft: "5px" }}>Loading...</Typography>
           </Box>
         )}
       </Box>
-      <ToastContainer position="bottom-right"/>
+      <ToastContainer position="bottom-right" />
     </Container>
   );
 }
