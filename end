@@ -1,0 +1,15 @@
+* [33m67921e2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m guestMode Route added
+[31m|[m * [33mf35342c[m[33m ([m[1;31morigin/main[m[33m)[m Update Login.js
+[31m|[m * [33m8cc91e3[m Update Login.js
+[31m|[m * [33m6de7962[m Update Login.js
+[31m|[m * [33m404ec71[m Update Login.js
+[31m|[m * [33m8f33e45[m add guest option in login
+[31m|[m[31m/[m  
+* [33m21a0010[m Fixed some known issues
+* [33m4a6e398[m Add validation to prevent empty submit, disbaled room number button on editing and fixed few know and unknown errors
+* [33m48232ef[m removed an error
+* [33m66f1803[m Full working frontend completed
+* [33m098da8e[m Frontend till Food Manager completed
+* [33m13ccbdf[m Frontend Completed Until AssignTask in Manager Dashboard
+* [33md8f64b6[m Removed .env
+* [33mb98fad9[m A Dummy whole frontend is ready without API working
