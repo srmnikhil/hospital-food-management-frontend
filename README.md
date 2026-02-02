@@ -74,3 +74,14 @@ Open in browser:
 ```bash
 http://localhost:3000
 ```
+---
+## 📂 Project Structure
+```bash
+src/
+ ├─ components/
+ ├─ pages/
+ ├─ services/
+ ├─ utils/
+ ├─ App.js
+ └─ index.js
+```
