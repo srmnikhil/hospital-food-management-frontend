@@ -85,3 +85,61 @@ src/
  ├─ App.js
  └─ index.js
 ```
+
+## 🔐 User Roles
+
+The system supports role-based access to ensure secure and efficient operations.
+
+### Admin
+- Full access to the system  
+- Manage users and roles  
+- Monitor inventory and reports  
+- Configure system settings  
+
+### Nutritionist
+- Create and update diet charts  
+- Assign meal plans to patients  
+- Review patient dietary history  
+
+### Pantry Staff
+- View assigned meal orders  
+- Update food preparation status  
+- Track ingredient usage  
+
+### Delivery Staff
+- View delivery list  
+- Update meal delivery status  
+- Track completed deliveries  
+
+### Viewer
+- Read-only access  
+- Can view patient and meal data  
+- No permission to modify records  
+
+---
+
+## 📊 Reports
+
+The system provides detailed reports to help hospital staff monitor operations and improve efficiency.
+
+### Daily Meal Report
+- Total meals prepared  
+- Meals delivered and pending  
+- Staff performance summary  
+
+### Patient Diet Report
+- Patient-wise diet plans  
+- Meal history  
+- Special dietary requirements  
+
+### Inventory Report
+- Ingredients used  
+- Current stock levels  
+- Low stock alerts  
+
+### Food Waste Report
+- Wasted food quantity  
+- Department-wise waste  
+- Trends over time  
+
+These reports help in decision-making, cost reduction, and improving food service quality.
