@@ -45,7 +45,7 @@ All while ensuring accuracy, transparency, and operational efficiency.
 - Express.js  
 
 **Database:**  
-- MongoDB / Supabase / MySQL  
+- MongoDB / MySQL  
 
 **Deployment & Tools:**  
 - Git & GitHub  
