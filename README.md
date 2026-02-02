@@ -62,3 +62,15 @@ Clone the repository:
 git clone https://github.com/your-username/hospital-food-management.git
 cd hospital-food-management
 ```
+Install dependencies:
+```bash
+npm install
+```
+Run the project:
+```bash
+npm start
+```
+Open in browser:
+```bash
+http://localhost:3000
+```
