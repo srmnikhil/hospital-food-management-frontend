@@ -1,70 +1,64 @@
-# Getting Started with Create React App
+# Hospital Food Management System 🏥🍽️
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Hospital Food Management System is a web app to streamline hospital food services.  
+It manages patients, diet charts, pantry staff, and deliveries. The system tracks meals in real time, automates inventory, and helps reduce food waste while improving overall efficiency.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Overview
 
-### `npm start`
+Hospitals handle multiple patients with different dietary needs every day.  
+This system provides a centralized platform to manage:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Patient diet requirements  
+- Food preparation workflows  
+- Pantry staff coordination  
+- Meal delivery tracking  
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+All while ensuring accuracy, transparency, and operational efficiency.
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## ✨ Features
 
-### `npm run build`
+- Patient management  
+- Diet chart assignment  
+- Pantry and staff management  
+- Meal scheduling and tracking  
+- Real-time delivery status  
+- Inventory automation  
+- Food waste monitoring  
+- Role-based access (admin, staff, nutritionist)  
+- Reports and analytics  
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🛠️ Tech Stack
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**Frontend:**  
+- React  
+- HTML & CSS  
+- Tailwind CSS  
 
-### `npm run eject`
+**Backend:**  
+- Node.js  
+- Express.js  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+**Database:**  
+- MongoDB / Supabase / MySQL  
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**Deployment & Tools:**  
+- Git & GitHub  
+- Vercel
+- Postman  
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📦 Installation
 
-## Learn More
+Clone the repository:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+git clone https://github.com/your-username/hospital-food-management.git
+cd hospital-food-management
+```
