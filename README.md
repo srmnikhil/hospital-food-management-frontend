@@ -1,4 +1,4 @@
-# Hospital Food Management System 🏥🍽️
+# Hospital Food Management System 🏥
 
 Hospital Food Management System is a web app to streamline hospital food services.  
 It manages patients, diet charts, pantry staff, and deliveries. The system tracks meals in real time, automates inventory, and helps reduce food waste while improving overall efficiency.
