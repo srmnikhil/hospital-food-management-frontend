@@ -78,7 +78,7 @@ http://localhost:3000
 ## 📂 Project Structure
 ```bash
 src/
- ├─ components/
+ ├─ Components/
  ├─ assets/
  ├─ pages/
  ├─ App.css
