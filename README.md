@@ -79,10 +79,11 @@ http://localhost:3000
 ```bash
 src/
  ├─ components/
+ ├─ assets/
  ├─ pages/
- ├─ services/
- ├─ utils/
+ ├─ App.css
  ├─ App.js
+ ├─ index.css
  └─ index.js
 ```
 
