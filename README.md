@@ -42,15 +42,14 @@ All while ensuring accuracy, transparency, and operational efficiency.
 
 **Backend:**  
 - Node.js  
-- Express.js  
+- Express.js
 
-**Database:**  
+**Database:**
 - MongoDB
 
 **Deployment & Tools:**  
 - Git & GitHub  
 - Vercel
-- Postman  
 
 ---
 
