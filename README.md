@@ -50,6 +50,7 @@ All while ensuring accuracy, transparency, and operational efficiency.
 **Deployment & Tools:**  
 - Git & GitHub  
 - Vercel
+- ThunderClient
 
 ---
 
