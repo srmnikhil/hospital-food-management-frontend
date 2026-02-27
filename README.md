@@ -138,9 +138,5 @@ The system provides detailed reports to help hospital staff monitor operations a
 - Current stock levels  
 - Low stock alerts  
 
-### Food Waste Report
-- Wasted food quantity  
-- Department-wise waste  
-- Trends over time  
 
 These reports help in decision-making, cost reduction, and improving food service quality.
